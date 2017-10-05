@@ -1,20 +1,98 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{title}}!
-  </h1>
-  <img width="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
+<div class="bs-component">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <div class="navbar-brand">
+          <ul class="nav navbar-nav">
+            <li class="active">{{title}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+<div class="contianer">
+  <div class="col-md-8">
+    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false" (mapClick)="mapClicked($event)">
+      <agm-marker *ngFor="let mark of markers, let i=index"  (markerClick)="markerClicked(mark,i)" [latitude]="mark.lat" [longitude]="mark.lng" [markerDraggable]="mark.draggable" (dragEnd)="markerDragEnd(mark,$event)">
+        <agm-info-window>
+           <h5 style="color:black">{{mark.name}}</h5>
+           <!-- <button type="button" name="button" (click)="removeMarker(mark)"> Remove WayPoint</button> -->
+        </agm-info-window>
+      </agm-marker>
+    </agm-map>
+  </div>
+
+  <div class="col-md-4">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h4>Add WayPoint</h4>
+      </div>
+      <div class="panel-body">
+        <form (submit)="addMarker()">
+          <input class="form-control" type="text" [(ngModel)]="markerName" name="markerName" placeholder="Waypoint Name">
+          <input class="form-control" type="text" [(ngModel)]="markerLat" name="markerLat" placeholder="Latitude">
+          <input class="form-control" type="text" [(ngModel)]="markerLng" name="markerLng" placeholder="Longitude">
+          <input class="form-control" type="submit" value="Add Waypoint">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-md-12">
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h4>Select Tour Stops</h4>
+      </div>
+      <div class="panel-body">
+        <input class="form-control" type="text" [(ngModel)]="searchName" name="searchName" (keypress)="filterWaypoints()" placeholder="filter">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let marker of markers" (click)="addToTrip(marker)">{{marker.name}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h4>Tour Stops</h4>
+      </div>
+      <div class="panel-body">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let stop of tour">{{stop.name}}<span class="badge" (click)="removefromTrip(stop)">X</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-12">
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h4>Select Driver</h4>
+      </div>
+      <div class="panel-body">
+          <div class="col-md-12">
+            <ul class="list-group">
+              <li class="list-group-item col-md-12"  *ngFor="let driver of drivers let i=index" (click)="selectDriver(i)">
+                <img class="col-md-3" style="border-radius:50%" [src]="driver.img" alt="" />
+                <div class="col-md-9">
+                  <h4 [class.selected]="driver.selected">{{driver.name}}</h4>
+                  <p [class.selected]="driver.selected" >{{driver.age}} Year-old</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="container" style="text-align:center">
+    <input class="form-control" style="width:200px" type="submit" value="Confirm Tour">
+</div>
